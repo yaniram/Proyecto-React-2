@@ -1,7 +1,16 @@
+import Footer from 'components/Footer';
+import Navbar from 'components/Navbar';
 import React from 'react'
 
-const PublicLayout = () => {
-    return <div>Public layout</div>;
+const PublicLayout = ({ children }) => {
+    return (
+     <div>
+         <Navbar/>
+         <main>{children}</main>
+         <Footer/>
+
+     </div>
+    )
     
 };
 
