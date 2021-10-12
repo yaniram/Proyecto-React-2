@@ -3,8 +3,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
-import { Dialog, Tooltip } from '@material-ui/core';
-import { obtenerCartuchos } from 'utils/api';
+/*import { Dialog, Tooltip } from '@material-ui/core';*/
+/*import { obtenerCartuchos } from 'utils/api';*/
 
 const Cartuchos = () => {
   const [mostrarTabla, setMostrarTabla] = useState(true);
@@ -94,7 +94,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
                 <th>Id</th>
                 <th>Nombre del cartucho</th>
                 <th>Marca del cartucho</th>
-                <th>Color del cartucho</th>
+                <th>Tinta del cartucho</th>
                 <th>Modelo </th>
               </tr>
             </thead>
@@ -119,7 +119,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
               <div className='bg-gray-400 m-2 shadow-xl flex flex-col p-2 rounded-xl'>
                 <span>{el.name}</span>
                 <span>{el.brand}</span>
-                <span>{el.model}</span>
+                <span>{el.tinta}</span>
               </div>
             );
           })}
@@ -212,7 +212,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
               type='text'
               value={infoNuevoCartuchos.color}
               onChange={(e) =>
-                setInfoNuevoCartuchos({ ...infoNuevoCartuchos, color: e.target.value })
+                setInfoNuevoCartuchos({ ...infoNuevoCartuchos, tinta: e.target.value })
               }
             />
           </td>
@@ -222,7 +222,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
           <td>{cartuchos._id.slice(20)}</td>
           <td>{cartuchos.name}</td>
           <td>{cartuchos.brand}</td>
-          <td>{cartuchos.color}</td>
+          <td>{cartuchos.tinta}</td>
         </>
       )}
       <td>
@@ -302,7 +302,7 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
       method: 'POST',
       url: 'http://localhost:5000/cartuchos/nuevo/',
       headers: { 'Content-Type': 'application/json' },
-      data: { name: nuevoCartuchos.name, brand: nuevoCartuchos.brand, color: nuevoCartuchos.model },
+      data: { name: nuevoCartuchos.name, brand: nuevoCartuchos.brand, tinta: nuevoCartuchos.tinta },
     };
 
     await axios
@@ -351,10 +351,10 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
             <option>Lexmark</option>
           </select>
         </label>
-        <label className='flex flex-col' htmlFor='colores'>
-          Color del cartucho: Negro ó Color
+        <label className='flex flex-col' htmlFor='tintas'>
+          tinta del cartucho: Negro ó Colors
           <input
-            name='color'
+            name='tinta'
             className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
             type='text'
             placeholder='negro'
