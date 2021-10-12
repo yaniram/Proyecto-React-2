@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
-/*import { Dialog, Tooltip } from '@material-ui/core';*/
+import { Dialog, Tooltip } from '@material-ui/core';
 /*import { obtenerCartuchos } from 'utils/api';*/
 
 const Cartuchos = () => {
@@ -16,7 +16,7 @@ const Cartuchos = () => {
   useEffect(() => {
     console.log('consulta', ejecutarConsulta);
     if (ejecutarConsulta) {
-      obtenerCartuchos(setCartuchos, setEjecutarConsulta);
+      obtenerCartuchos(setCartuchos, setEjecutarConsulta); /*esto permite que se actualice la tabla*/
     }
   }, [ejecutarConsulta]);
 
@@ -72,8 +72,8 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
   
     useEffect(() => {
       setCartuchosFiltrados(
-        listaCartuchos.filter((elemento) => {
-          return JSON.stringify(elemento).toLowerCase().includes(busqueda.toLowerCase());
+        listaCartuchos.filter((elemento) => { /*me filtra la informacion*/
+          return JSON.stringify(elemento).toLowerCase().includes(busqueda.toLowerCase()); /*esto me permite buscar en mayusculo o miniscula*/
         })
       );
     }, [busqueda, listaCartuchos]);
@@ -83,7 +83,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
         <input
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          placeholder='Buscar'
+          placeholder='Buscar en esta tabla'
           className='border-2 border-gray-700 px-3 py-1 self-start rounded-md focus:outline-none focus:border-indigo-500'
         />
         <h2 className='text-2xl font-extrabold text-gray-800'>Todos los cartuchos</h2>
@@ -95,7 +95,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
                 <th>Nombre del cartucho</th>
                 <th>Marca del cartucho</th>
                 <th>Tinta del cartucho</th>
-                <th>Modelo </th>
+                <th>Acciones </th> {/*me permite editar la tabla*/}
               </tr>
             </thead>
             <tbody>
@@ -128,21 +128,21 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
     );
   };
   
-  const FilaCartuchos = ({ cartuchos, setEjecutarConsulta }) => {
+const FilaCartuchos = ({ cartuchos, setEjecutarConsulta }) => {
     const [edit, setEdit] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [infoNuevoCartuchos, setInfoNuevoCartuchos] = useState({
       _id: cartuchos._id,
       name: cartuchos.name,
       brand: cartuchos.brand,
-      color: cartuchos.color,
+      tinta: cartuchos.tinta,
     });
   
-    const actualizarCartuchos = async () => {
+const actualizarCartuchos = async () => {
       //enviar la info al backend
       const options = {
         method: 'PATCH',
-        url: `http://localhost:5000/vehiculos/${cartuchos._id}/`,
+        url: `http://localhost:5000/cartuchos/${cartuchos._id}/`,
         headers: { 'Content-Type': 'application/json' },
         data: { ...infoNuevoCartuchos },
       };
@@ -161,7 +161,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
       });
   };  
   
-  const eliminarCartuchos = async () => {
+const eliminarCartuchos = async () => {
     const options = {
       method: 'DELETE',
       url: 'http://localhost:5000/cartuchos/eliminar/',
@@ -210,7 +210,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
             <input
               className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
               type='text'
-              value={infoNuevoCartuchos.color}
+              value={infoNuevoCartuchos.tinta}
               onChange={(e) =>
                 setInfoNuevoCartuchos({ ...infoNuevoCartuchos, tinta: e.target.value })
               }
@@ -238,7 +238,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
               <Tooltip title='Cancelar edición' arrow>
                 <i
                   onClick={() => setEdit(!edit)}
-                  className='fas fa-ban text-yellow-700 hover:text-yellow-500'
+                  className='fas fa-undo text-yellow-700 hover:text-yellow-500'
                 />
               </Tooltip>
             </>
