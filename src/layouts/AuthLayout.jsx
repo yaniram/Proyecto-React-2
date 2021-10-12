@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ImagenLogo from 'components/ImagenLogo';
 
 const AuthLayout = ({ children }) => {
   return (
@@ -11,7 +12,7 @@ const AuthLayout = ({ children }) => {
         </Link>
       </div>
       <div className='max-w-md w-full'>
-     
+        <ImagenLogo />
         {children}
       </div>
     </div>
