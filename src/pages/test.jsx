@@ -1,4 +1,4 @@
-/*import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { obtenerUsuarios } from 'utils/api';
@@ -33,7 +33,7 @@ const Test = () => {
 
     const informacionConsolidada = {
       valor: nuevaVenta.cantidadVenta,
-      cartuchos: cartuchos.filter((el) => el._id === nuevaVenta.cartuchos)[0],
+      cartuchos: cartuchos.filter((el) => el._id === nuevaVenta.cartucho)[0],
       vendedor: usuarios.filter((el) => el._id === nuevaVenta.vendedor)[0],
     };
     console.log(informacionConsolidada);
@@ -75,7 +75,7 @@ const Test = () => {
         </label>
         <label>
           Seleccionar Cartucho
-          <select name='cartuchos'>
+          <select name='cartucho'>
             {cartuchos.map((v) => {
               return (
                 <option value={v._id} key={nanoid()}>
@@ -92,4 +92,4 @@ const Test = () => {
   );
 };
 
-export default Test;*/
+export default Test;

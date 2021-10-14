@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@material-ui/core';
-/*import { obtenerCartuchos } from 'utils/api';*/
+import { obtenerCartuchos, crearCartucho, editarCartucho, eliminarCartucho } from 'utils/api';
 
 const Cartuchos = () => {
   const [mostrarTabla, setMostrarTabla] = useState(true);
@@ -13,12 +12,29 @@ const Cartuchos = () => {
   const [colorBoton, setColorBoton] = useState('indigo');
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
       
-  useEffect(() => {
+  /*useEffect(() => {
     console.log('consulta', ejecutarConsulta);
     if (ejecutarConsulta) {
       obtenerCartuchos(setCartuchos, setEjecutarConsulta); /*esto permite que se actualice la tabla*/
+    /*}
+  }, [ejecutarConsulta]); */
+
+  useEffect(() => {
+    console.log('consulta', ejecutarConsulta);
+    if (ejecutarConsulta) {
+      obtenerCartuchos(
+        (response) => {
+          console.log('la respuesta que se recibio fue', response);
+          setCartuchos(response.data);
+          setEjecutarConsulta(false);
+        },
+        (error) => {
+          console.error('Salio un error:', error);
+        }
+      );
     }
   }, [ejecutarConsulta]);
+
 
   useEffect(() => {
     //obtener lista de cartuchos desde el backend
@@ -26,6 +42,7 @@ const Cartuchos = () => {
       setEjecutarConsulta(true);
     }
   }, [mostrarTabla]);
+
 
   useEffect(() => {
     if (mostrarTabla) {
@@ -41,7 +58,7 @@ const Cartuchos = () => {
     <div className='flex h-full w-full flex-col items-center justify-start p-8'>
       <div className='flex flex-col w-full'>
         <h2 className='text-3xl font-extrabold text-gray-900'>
-          Página de administración de cartuchos
+          Administración de cartuchos
         </h2>
         <button
           onClick={() => {
@@ -52,19 +69,26 @@ const Cartuchos = () => {
           {textoBoton}
         </button>
       </div>
+       
+            
+      
       {mostrarTabla ? (
-        <TablaCartuchos listaCartuchos={cartuchos} setEjecutarConsulta={setEjecutarConsulta} />
-        ) : (
-          <FormularioCreacionCartuchos
-            setMostrarTabla={setMostrarTabla}
-            listaCartuchos={cartuchos}
-            setCartuchos={setCartuchos}
-          />
-        )}
-        <ToastContainer position='bottom-center' autoClose={5000} />
+        <TablaCartuchos
+         listaCartuchos={cartuchos}
+         setEjecutarConsulta={setEjecutarConsulta}
+        />
+      ) : (
+        <FormularioCreacionCartuchos
+        setMostrarTabla={setMostrarTabla}
+        listaCartuchos={cartuchos}
+        setCartuchos={setCartuchos}
+        />
+      )}
+
+      <ToastContainer position='bottom-center' autoClose={5000} />
       </div>
     );
-  };
+};
   
 const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
     const [busqueda, setBusqueda] = useState('');
@@ -88,29 +112,29 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
         />
         <h2 className='text-2xl font-extrabold text-gray-800'>Todos los cartuchos</h2>
         <div className='hidden md:flex w-full'>
-          <table className='tabla'>
+            <table className='tabla'>
             <thead>
               <tr>
                 <th>Id</th>
                 <th>Nombre del cartucho</th>
                 <th>Marca del cartucho</th>
-                <th>Tinta del cartucho</th>
+                <th>Ink del cartucho</th>
                 <th>Acciones </th> {/*me permite editar la tabla*/}
               </tr>
             </thead>
             <tbody>
-              {cartuchosFiltrados.map((cartuchos) => {
-                
-                return (
-                  <FilaCartuchos
+              {cartuchosFiltrados.map((cartucho) => {
+                 return (
+                  <FilaCartucho
                     key={nanoid()}
-                    cartuchos={cartuchos}
+                    cartucho={cartucho}
                     setEjecutarConsulta={setEjecutarConsulta}
                   />
                 );
               })}
             </tbody>
           </table>
+         
         </div>
         <div className='flex flex-col w-full m-2 md:hidden'>
           {cartuchosFiltrados.map((el) => {
@@ -119,7 +143,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
               <div className='bg-gray-400 m-2 shadow-xl flex flex-col p-2 rounded-xl'>
                 <span>{el.name}</span>
                 <span>{el.brand}</span>
-                <span>{el.tinta}</span>
+                <span>{el.ink}</span>
               </div>
             );
           })}
@@ -128,81 +152,76 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
     );
   };
   
-const FilaCartuchos = ({ cartuchos, setEjecutarConsulta }) => {
+const FilaCartucho = ({ cartucho, setEjecutarConsulta }) => {
     const [edit, setEdit] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [infoNuevoCartuchos, setInfoNuevoCartuchos] = useState({
-      _id: cartuchos._id,
-      name: cartuchos.name,
-      brand: cartuchos.brand,
-      tinta: cartuchos.tinta,
+    const [infoNuevoCartucho, setInfoNuevoCartucho] = useState({
+      _id: cartucho._id,
+      name: cartucho.name,
+      brand: cartucho.brand,
+      ink: cartucho.ink,
     });
   
-const actualizarCartuchos = async () => {
+const actualizarCartucho = async () => {
       //enviar la info al backend
-      const options = {
-        method: 'PATCH',
-        url: `http://localhost:5000/cartuchos/${cartuchos._id}/`,
-        headers: { 'Content-Type': 'application/json' },
-        data: { ...infoNuevoCartuchos },
-      };
+      await editarCartucho(
+        cartucho._id,
+        {
+          name: infoNuevoCartucho.name,
+          brand: infoNuevoCartucho.brand,
+          ink: infoNuevoCartucho.ink,
+        },
+        (response) => {
+          console.log(response.data);
+          toast.success('Cartucho modificado con éxito');
+          setEdit(false);
+          setEjecutarConsulta(true);
+        },
+        (error) => {
+          toast.error('Error modificando el cartucho');
+          console.error(error);
+        }
+      );
+    };  
   
-      await axios
-      .request(options)
-      .then(function (response) {
+const deleteCartucho = async () => {
+    await eliminarCartucho(
+      cartucho._id,
+      (response) => {
         console.log(response.data);
-        toast.success('Cartucho modificado con éxito');
-        setEdit(false);
+        toast.success('Cartucho eliminado con éxito');
         setEjecutarConsulta(true);
-      })
-      .catch(function (error) {
-        toast.error('Error modificando el vehículo');
-        console.error(error);
-      });
-  };  
-  
-const eliminarCartuchos = async () => {
-    const options = {
-      method: 'DELETE',
-      url: 'http://localhost:5000/cartuchos/eliminar/',
-      headers: { 'Content-Type': 'application/json' },
-      data: { id: cartuchos._id },
-    };
-
-    await axios
-      .request(options)
-      .then(function (response) {
-        console.log(response.data);
-        toast.success('cartucho eliminado con éxito');
-        setEjecutarConsulta(true);
-      })
-      .catch(function (error) {
+      },
+      (error) => {
         console.error(error);
         toast.error('Error eliminando el cartucho');
-      });
+      }
+    );
+
     setOpenDialog(false);
-  };
+  };  
+    
 
   return (
     <tr>
       {edit ? (
         <>
-          <td>{infoNuevoCartuchos._id}</td>
+          <td>{infoNuevoCartucho._id}</td>
           <td>
             <input
               className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
               type='text'
-              value={infoNuevoCartuchos.name}
-              onChange={(e) => setInfoNuevoCartuchos({ ...infoNuevoCartuchos, name: e.target.value })}
+              value={infoNuevoCartucho.name}
+              onChange={(e) => setInfoNuevoCartucho({ ...infoNuevoCartucho, name: e.target.value })}
             />
           </td>
           <td>
             <input
               className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
               type='text'
-              value={infoNuevoCartuchos.brand}
+              value={infoNuevoCartucho.brand}
               onChange={(e) =>
-                setInfoNuevoCartuchos({ ...infoNuevoCartuchos, brand: e.target.value })
+                setInfoNuevoCartucho({ ...infoNuevoCartucho, brand: e.target.value })
               }
             />
           </td>
@@ -210,19 +229,19 @@ const eliminarCartuchos = async () => {
             <input
               className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
               type='text'
-              value={infoNuevoCartuchos.tinta}
+              value={infoNuevoCartucho.ink}
               onChange={(e) =>
-                setInfoNuevoCartuchos({ ...infoNuevoCartuchos, tinta: e.target.value })
+                setInfoNuevoCartucho({ ...infoNuevoCartucho, ink: e.target.value })
               }
             />
           </td>
         </>
       ) : (
         <>
-          <td>{cartuchos._id.slice(20)}</td>
-          <td>{cartuchos.name}</td>
-          <td>{cartuchos.brand}</td>
-          <td>{cartuchos.tinta}</td>
+          <td>{cartucho._id.slice(20)}</td>
+          <td>{cartucho.name}</td>
+          <td>{cartucho.brand}</td>
+          <td>{cartucho.ink}</td>
         </>
       )}
       <td>
@@ -231,7 +250,7 @@ const eliminarCartuchos = async () => {
             <>
               <Tooltip title='Confirmar Edición' arrow>
                 <i
-                  onClick={() => actualizarCartuchos()}
+                  onClick={() => actualizarCartucho()}
                   className='fas fa-check text-green-700 hover:text-green-500'
                 />
               </Tooltip>
@@ -267,7 +286,7 @@ const eliminarCartuchos = async () => {
             </h1>
             <div className='flex w-full items-center justify-center my-4'>
               <button
-                onClick={() => eliminarCartuchos()}
+                onClick={() => deleteCartucho()}
                 className='mx-2 px-4 py-2 bg-green-500 text-white hover:bg-green-700 rounded-md shadow-md'
               >
                 Sí
@@ -293,16 +312,32 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
     e.preventDefault();
     const fd = new FormData(form.current);
 
-    const nuevoCartuchos = {};
+    const nuevoCartucho = {};
     fd.forEach((value, key) => {
-      nuevoCartuchos[key] = value;
+      nuevoCartucho[key] = value;
     });
 
-    const options = {
+    await crearCartucho(   //esta es la data
+      {
+        name: nuevoCartucho.name,
+        brand: nuevoCartucho.brand,
+        ink: nuevoCartucho.ink,
+      },
+      (response) => {        //función de éxito
+        console.log(response.data);
+        toast.success('Cartucho agregado con éxito');
+      },
+      (error) => {           //función de error
+        console.error(error);
+        toast.error('Error creando un cartucho');
+      }
+    );
+
+   /* const options = {
       method: 'POST',
       url: 'http://localhost:5000/cartuchos/nuevo/',
       headers: { 'Content-Type': 'application/json' },
-      data: { name: nuevoCartuchos.name, brand: nuevoCartuchos.brand, tinta: nuevoCartuchos.tinta },
+      data: { name: nuevoCartuchos.name, brand: nuevoCartuchos.brand, ink: nuevoCartuchos.ink},
     };
 
     await axios
@@ -314,7 +349,7 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
       .catch(function (error) {
         console.error(error);
         toast.error('Error creando un cartucho');
-      });
+      }); */
 
     setMostrarTabla(true);
   };
@@ -329,12 +364,12 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
             name='name'
             className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
             type='text'
-            placeholder='662'
+            placeholder='662XL'
             required
           />
         </label>
         <label className='flex flex-col' htmlFor='marca'>
-          Marca del toner
+          Marca del Cartucho
           <select
             className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
             name='brand'
@@ -352,21 +387,26 @@ const FormularioCreacionCartuchos = ({ setMostrarTabla, listaCartuchos, setCartu
           </select>
         </label>
         <label className='flex flex-col' htmlFor='tintas'>
-          tinta del cartucho: Negro ó Colors
-          <input
-            name='tinta'
+          Tipo de Tinta
+          <select
             className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2'
-            type='text'
-            placeholder='negro'
+            name='ink'
             required
-          />
+            defaultValue={0}
+          >
+            <option disabled value={0}>
+              Seleccione una opción
+            </option>
+            <option>Negro</option>
+            <option>Color</option>
+            </select>
         </label>
-
+          
         <button
           type='submit'/*este me muestra que campo falta por completar*/
           className='col-span-2 bg-green-400 p-2 rounded-full shadow-md hover:bg-green-600 text-white'
         >
-          Guardar cartuchos
+          Guardar cartucho
         </button>
       </form>
     </div>

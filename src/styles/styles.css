@@ -28,5 +28,5 @@
   
   .tabla tr:hover {
     background-color: #ddd;
-    cursor: pointer;
+    /*cursor: pointer;*/
   }

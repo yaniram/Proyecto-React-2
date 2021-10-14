@@ -3,14 +3,15 @@ import AuthLayout from 'layouts/AuthLayout';
 import PublicLayout from 'layouts/PublicLayout';
 import PrivateLayout from 'layouts/PrivateLayout';
 import Admin from 'pages/admin/IndexAdmin';
-import Clientes from 'pages/admin/Clientes';
+//import Clientes from 'pages/admin/Clientes';
+import Usuarios from 'pages/admin/Usuarios';
 import Cartuchos from 'pages/admin/Cartuchos';
+import Ventas from 'pages/admin/Ventas';
 import Index from 'pages/Index';
 import Login from 'pages/Login';
 import Registro from 'pages/Registro';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { DarkModeContext } from 'context/darkMode';
-import Test from 'pages/test';
 import 'styles/styles.css';
 
 
@@ -26,17 +27,18 @@ function App() {
     <Router>
       <Switch>
         {/*Aca dentro colocamos una ruta por cada layout*/}
-        <Route path={['/admin','/admin/cartuchos','/admin/clientes','/test']}>
+        <Route path={['/admin','/admin/cartuchos','/admin/usuarios','/admin/ventas']}>
           <PrivateLayout>
             <Switch>
               <Route path='/admin/cartuchos'>
                 <Cartuchos />
               </Route>
-              <Route path='/test'>
-                    <Test />
+              <Route path='/admin/ventas'>
+                    <Ventas />
                   </Route>
-              <Route path='/admin/clientes'>
-                <Clientes />
+  
+              <Route path='/admin/usuarios'>
+                <Usuarios />
               </Route>
               <Route path='/admin'>
                 <Admin />
