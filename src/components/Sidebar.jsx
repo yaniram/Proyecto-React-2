@@ -21,7 +21,7 @@ const Sidebar = () => {
   );
 };
 
-const Ruta = ({ icono, ruta, nombre }) => {
+const Ruta = ({ icono, ruta, nombre, usuario }) => {
   const isActive = useActiveRoute(ruta);
   return (
     <Link to={ruta}>
