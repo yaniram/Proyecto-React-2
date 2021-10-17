@@ -13,6 +13,7 @@ import Registro from 'pages/Registro';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { DarkModeContext } from 'context/darkMode';
 import 'styles/styles.css';
+import { Auth0Provider } from "@auth0/auth0-react";
 
 
 function App() {
@@ -22,6 +23,11 @@ function App() {
   }, [darkMode]);
 
   return (
+    <Auth0Provider
+      domain="misiontic-todoink.us.auth0.com"
+      clientId="1SAF13lQMIKVXQIQ263Mw5WxlXeTLqJ1"
+      redirectUri={window.location.origin}
+      >|
     <div className='App'>
       <DarkModeContext.Provider value={{ darkMode, setDarkMode }}>
     <Router>
@@ -76,6 +82,7 @@ function App() {
     </Router>
     </DarkModeContext.Provider>
     </div>
+    </Auth0Provider>
   );
   
 }

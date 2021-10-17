@@ -25,7 +25,7 @@ const Usuarios = () => {
     <div>
       <div>admin usuarios</div>
       
-        <button className='bg-red-400'>Hola RBAC</button>
+        <button className='bg-red-400'>Usuarios</button>
       
       <table className='tabla'>
         <tbody>
