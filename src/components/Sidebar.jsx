@@ -18,7 +18,7 @@ const Sidebar = () => {
         <Ruta icono='fas fa-cash-register' ruta='/admin/ventas' nombre='Ventas' />
         <Ruta icono='fas fa-users' ruta='/admin/usuarios' nombre='Usuarios' />
       </div>
-      <button onClick={() => logout({ returnTo: 'http://localhost:3000/' })}>Cerrar Sesión</button>
+      <button onClick={() => logout({ returnTo: window.location.origin })}>Cerrar Sesión</button>
     </nav>
   );
 };

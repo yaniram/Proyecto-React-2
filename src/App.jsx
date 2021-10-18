@@ -27,7 +27,8 @@ function App() {
       domain="misiontic-todoink.us.auth0.com"
       clientId="1SAF13lQMIKVXQIQ263Mw5WxlXeTLqJ1"
       redirectUri={window.location.origin}
-      >|
+      audience= 'https://api-autenticacion-todoink-misiontic/'
+      >
     <div className='App'>
       <DarkModeContext.Provider value={{ darkMode, setDarkMode }}>
     <Router>
