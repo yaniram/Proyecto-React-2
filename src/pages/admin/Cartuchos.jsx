@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ReactLoading from 'react-loading';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@material-ui/core';
 import { obtenerCartuchos, crearCartucho, editarCartucho, eliminarCartucho } from 'utils/api';
@@ -11,6 +12,7 @@ const Cartuchos = () => {
   const [textoBoton, setTextoBoton] = useState('Crear Nuevo Cartucho');
   const [colorBoton, setColorBoton] = useState('indigo');
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
+  const [loading, setLoading] = useState(false);
       
   /*useEffect(() => {
     console.log('consulta', ejecutarConsulta);
@@ -20,6 +22,23 @@ const Cartuchos = () => {
   }, [ejecutarConsulta]); */
 
   useEffect(() => {
+    const fetchCartuchos = async () => {
+      setLoading(true);
+      await obtenerCartuchos(
+        (response) => {
+          console.log('la respuesta que se recibio fue', response);
+          setCartuchos(response.data);
+          setEjecutarConsulta(false);
+          setLoading(false);
+        },
+        (error) => {
+          console.error('Salio un error:', error);
+          setLoading(false);
+        }
+      );
+    };
+    
+    
     console.log('consulta', ejecutarConsulta);
     if (ejecutarConsulta) {
       obtenerCartuchos(
@@ -74,6 +93,7 @@ const Cartuchos = () => {
       
       {mostrarTabla ? (
         <TablaCartuchos
+         loading={loading} 
          listaCartuchos={cartuchos}
          setEjecutarConsulta={setEjecutarConsulta}
         />
@@ -90,7 +110,7 @@ const Cartuchos = () => {
     );
 };
   
-const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
+const TablaCartuchos = ({ loading, listaCartuchos, setEjecutarConsulta }) => {
     const [busqueda, setBusqueda] = useState('');
     const [cartuchosFiltrados, setCartuchosFiltrados] = useState(listaCartuchos);
   
@@ -112,6 +132,9 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
         />
         <h2 className='text-2xl font-extrabold text-gray-800'>Todos los cartuchos</h2>
         <div className='hidden md:flex w-full'>
+          {loading ? (
+            <ReactLoading type='cylon' color='#abc123' height={667} width={375} />
+           ) : (
             <table className='tabla'>
             <thead>
               <tr>
@@ -134,7 +157,7 @@ const TablaCartuchos = ({ listaCartuchos, setEjecutarConsulta }) => {
               })}
             </tbody>
           </table>
-         
+           )}
         </div>
         <div className='flex flex-col w-full m-2 md:hidden'>
           {cartuchosFiltrados.map((el) => {

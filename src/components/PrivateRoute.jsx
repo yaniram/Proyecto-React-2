@@ -1,29 +1,32 @@
 import React, {useEffect} from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
+import ReactLoading from 'react-loading';
 //import { Link } from 'react-router-dom';
 
 const PrivateRoute = ({ children }) => {
     const { isAuthenticated, isLoading, loginWithRedirect, getAccessTokenSilently } = useAuth0();
-
+    
+  
     useEffect(() => {
+      const fetchAuth0Token = async () => {
+        const accessToken = await getAccessTokenSilently({
+            audience: `api-autenticacion-todoink-cartuchos`,
+          });
+          localStorage.setItem('token', accessToken);
+        };
+        if (isAuthenticated) {
+          fetchAuth0Token();
+        }
+      }, [isAuthenticated, getAccessTokenSilently]);
 
-        const fetchAuth0Token = async () => {
-          const  accessToken = await getAccessTokenSilently({
-            audience: `https://api-autenticacion-todoink-misiontic/`,
-    });
-    console.log(accessToken);
-};
-        fetchAuth0Token()
-    }, []);
+          
+      if (isLoading) return <ReactLoading type='cylon' color='#abc123' height={667} width={375} />;
 
-    if(isLoading) return <div>Loading...</div>;
-
-    if(isAuthenticated) {
+      if (!isAuthenticated) {
         return loginWithRedirect();
-    }
-
-    return <>{children}</>;
-
+      }
+    
+      return <>{children}</>;
 }; 
 
  /* return isAuthenticated ? ( 

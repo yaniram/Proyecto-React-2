@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import AuthLayout from 'layouts/AuthLayout';
-import PublicLayout from 'layouts/PublicLayout';
 import PrivateLayout from 'layouts/PrivateLayout';
+import PublicLayout from 'layouts/PublicLayout';
+import Index from 'pages/Index';
 import Admin from 'pages/admin/IndexAdmin';
+import Cartuchos from 'pages/admin/Cartuchos';
+import Login from 'pages/Login';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import 'styles/styles.css';
+import Registro from 'pages/Registro';
+import AuthLayout from 'layouts/AuthLayout';
+import { DarkModeContext } from 'context/darkMode';
+import Ventas from 'pages/admin/Ventas';
+import { Auth0Provider } from "@auth0/auth0-react";
 //import Clientes from 'pages/admin/Clientes';
 import Usuarios from 'pages/admin/Usuarios';
-import Cartuchos from 'pages/admin/Cartuchos';
-import Ventas from 'pages/admin/Ventas';
-import Index from 'pages/Index';
-import Login from 'pages/Login';
-import Registro from 'pages/Registro';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { DarkModeContext } from 'context/darkMode';
-import 'styles/styles.css';
-import { Auth0Provider } from "@auth0/auth0-react";
 
 
 function App() {
@@ -26,8 +26,8 @@ function App() {
     <Auth0Provider
       domain="misiontic-todoink.us.auth0.com"
       clientId="1SAF13lQMIKVXQIQ263Mw5WxlXeTLqJ1"
-      redirectUri={window.location.origin}
-      audience= 'https://api-autenticacion-todoink-misiontic/'
+      redirectUri="http://localhost:3000/admin"
+      audience= 'api-autenticacion-todoink-cartuchos'
       >
     <div className='App'>
       <DarkModeContext.Provider value={{ darkMode, setDarkMode }}>
