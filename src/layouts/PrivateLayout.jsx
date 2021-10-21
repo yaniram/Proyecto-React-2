@@ -1,10 +1,11 @@
+
 import PrivateRoute from 'components/PrivateRoute';
 import Sidebar from 'components/Sidebar';
-import React from 'react'
+import React from 'react';
 
 
 const PrivateLayout = ({ children }) => {
-    
+  
     return (
       <PrivateRoute>
         <div className="flex w-screen h-screen">
