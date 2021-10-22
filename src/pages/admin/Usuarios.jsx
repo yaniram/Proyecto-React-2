@@ -71,7 +71,7 @@ const RolesUsuario = ({ user }) => {
     <select value={rol} onChange={(e) => setRol(e.target.value)}>
       <option value='admin'>Admin</option>
       <option value='vendedor'>Vendedor</option>
-      <option value='inactivo'>Inactivo</option>
+      <option value='inactivo'>Pendiente</option>
     </select>
   );
 };
