@@ -14,14 +14,7 @@ const Cartuchos = () => {
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
   const [loading, setLoading] = useState(false);
       
-  /*useEffect(() => {
-    console.log('consulta', ejecutarConsulta);
-    if (ejecutarConsulta) {
-      obtenerCartuchos(setCartuchos, setEjecutarConsulta); /*esto permite que se actualice la tabla*/
-    /*}
-  }, [ejecutarConsulta]); */
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchCartuchos = async () => {
       setLoading(true);
       await obtenerCartuchos(
