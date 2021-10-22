@@ -62,7 +62,7 @@ export const obtenerDatosUsuario = async (successCallback, errorCallback) => {
     method: 'GET',
     url: 'http://localhost:5000/usuarios/self',
     headers: {
-      Authorization: getToken(), // 3. enviarle el token a backend
+      Authorization: getToken(), // 3. React le envia el token a backend
     },
   };
   await axios.request(options).then(successCallback).catch(errorCallback);
