@@ -5,6 +5,7 @@ import ReactLoading from 'react-loading';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@material-ui/core';
 import { obtenerCartuchos, crearCartucho, editarCartucho, eliminarCartucho } from 'utils/api';
+import PrivateComponent from 'components/PrivateComponent';
 
 const Cartuchos = () => {
   const [mostrarTabla, setMostrarTabla] = useState(true);
@@ -135,7 +136,9 @@ const TablaCartuchos = ({ loading, listaCartuchos, setEjecutarConsulta }) => {
                 <th>Nombre del cartucho</th>
                 <th>Marca del cartucho</th>
                 <th>Ink del cartucho</th>
-                <th>Acciones </th> {/*me permite editar la tabla*/}
+                <PrivateComponent roleList={['admin']}>
+                  <th>Acciones </th> {/*me permite editar la tabla*/}
+                  </PrivateComponent>  
               </tr>
             </thead>
             <tbody>
@@ -260,6 +263,8 @@ const deleteCartucho = async () => {
           <td>{cartucho.ink}</td>
         </>
       )}
+
+      <PrivateComponent roleList={['admin']}>
       <td>
         <div className='flex w-full justify-around'>
           {edit ? (
@@ -317,6 +322,7 @@ const deleteCartucho = async () => {
           </div>
         </Dialog>
       </td>
+      </PrivateComponent>
     </tr>
   );
 };
