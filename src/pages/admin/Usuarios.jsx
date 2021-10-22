@@ -1,3 +1,4 @@
+import PrivateComponent from 'components/PrivateComponent';
 import { nanoid } from 'nanoid';
 import React, { useState, useEffect } from 'react';
 import { editarUsuario } from 'utils/api';
@@ -24,8 +25,9 @@ const Usuarios = () => {
   return (
     <div>
       <div>admin usuarios</div>
-      
+      <PrivateComponent roleList={["admin", "vendedor"]}>
         <button className='bg-red-400'>Usuarios</button>
+      </PrivateComponent>  
       
       <table className='tabla'>
         <tbody>

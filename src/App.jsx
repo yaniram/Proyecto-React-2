@@ -12,12 +12,12 @@ import AuthLayout from 'layouts/AuthLayout';
 import { DarkModeContext } from 'context/darkMode';
 import Ventas from 'pages/admin/Ventas';
 import { Auth0Provider } from "@auth0/auth0-react";
-//import Clientes from 'pages/admin/Clientes';
 import Usuarios from 'pages/admin/Usuarios';
-
+import { UserContext } from 'context/userContext';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
+  const [userData, setUserData] = useState({});
   useEffect(() => {
     console.log('modo dark:', darkMode);
   }, [darkMode]);
@@ -30,6 +30,7 @@ function App() {
       audience= 'api-autenticacion-todoink-cartuchos'
       >
     <div className='App'>
+    <UserContext.Provider value={{ userData, setUserData }}>
       <DarkModeContext.Provider value={{ darkMode, setDarkMode }}>
     <Router>
       <Switch>
@@ -82,6 +83,7 @@ function App() {
       
     </Router>
     </DarkModeContext.Provider>
+    </UserContext.Provider>
     </div>
     </Auth0Provider>
   );
